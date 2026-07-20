@@ -2,6 +2,8 @@ name: Run Discogs ETL
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * 0'
 
 jobs:
   run-etl:
