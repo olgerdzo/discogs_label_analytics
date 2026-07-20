@@ -23,6 +23,8 @@ def get_releases(page, year):
     query_params = {
         'type': 'release',
         'year': year,
+        'format': 'cd',
+        'country': 'us',
         'per_page':100,
         'page': page
     }
@@ -38,6 +40,8 @@ def pages(year):
     query_params = {
         'type': 'release',
         'year': year,
+        'format': 'cd',
+        'country': 'us',
         'per_page':100,
     }
     response = requests.get(url, headers=headers, params=query_params)
@@ -51,7 +55,7 @@ def pages(year):
 
 releases_info = []
 
-for year in range(current_year-2, current_year+1):
+for year in range(current_year-20, current_year+1):
     for page in range(1,pages(year)+1):
         data = get_releases(page,year)
         if data:
