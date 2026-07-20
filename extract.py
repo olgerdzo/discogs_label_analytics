@@ -4,9 +4,11 @@ from dotenv import load_dotenv
 import pandas as pd
 import time
 from datetime import datetime
+from sqlalchemy import create_engine
 
 load_dotenv()
 TOKEN = os.getenv("DISCOGS_TOKEN")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 BASE_URL = "https://api.discogs.com"
 headers = {
@@ -49,35 +51,36 @@ def pages(year):
 
 releases_info = []
 
-# ----------- temporary >>>
-data = get_releases(1,2026)
-
-for release in data['results']:
-    row = {
-        # 'title': release['title'],
-        'label': release['label'],
-        'want': release['community']['want'],
-        'have': release['community']['have']
-    }
-    releases_info.append(row)
-# ---------- temporary <<<<
-
-# for year in range(current_year-1, current_year+1):
-#     for page in range(1,pages(year)+1):
-#         data = get_releases(page,year)
-#         for release in data['results']:
-#             row = {
-#                 # 'title': release['title'],
-#                 'label': release['label'],
-#                 'want': release['community']['want'],
-#                 'have': release['community']['have']
-#             }
-#             releases_info.append(row)
-#         time.sleep(1)
+for year in range(current_year-2, current_year+1):
+    for page in range(1,pages(year)+1):
+        data = get_releases(page,year)
+        if data:
+            for release in data['results']:
+                row = {
+                    'label': release['label'],
+                    'want': release['community']['want'],
+                    'have': release['community']['have']
+                }
+                releases_info.append(row)
+        time.sleep(1)
+        print('.', end='',flush=True)
+    print()
 
 df_raw = pd.DataFrame(releases_info)
+
 df_clean = df_raw.explode('label')
-df_analytics = df_clean.groupby('label')[['want','have']].sum()
-df_analytics = df_analytics.sort_values(by='have', ascending=False)
-df_analytics['want-to-have-ratio']=df_analytics['want']/df_analytics['have']
-print(df_analytics)
+df_clean = df_clean.groupby('label')[['want','have']].sum()
+df_clean = df_clean.sort_values(by='have', ascending=False)
+df_clean['want_to_have_ratio']=df_clean['want']/df_clean['have']
+df_clean = df_clean[(df_clean['want'] != 0) | (df_clean['have'] != 0)]
+print(df_clean)
+
+engine = create_engine(DATABASE_URL)
+
+df_clean.to_sql(
+    name='want_and_have_by_label',
+    con=engine,
+    if_exists='replace',
+    index=True,
+    index_label='label_name'
+)
