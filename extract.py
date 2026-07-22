@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import pandas as pd
 import time
 from datetime import datetime
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 
 load_dotenv()
 TOKEN = os.getenv("DISCOGS_TOKEN")
@@ -75,16 +75,23 @@ df_raw = pd.DataFrame(releases_info)
 df_clean = df_raw.explode('label')
 df_clean = df_clean.groupby('label')[['want','have']].sum()
 df_clean = df_clean.sort_values(by='have', ascending=False)
-df_clean['want_to_have_ratio']=df_clean['want']/df_clean['have']
 df_clean = df_clean[(df_clean['want'] != 0) | (df_clean['have'] != 0)]
 print(df_clean)
 
 engine = create_engine(DATABASE_URL)
 
+with engine.connect() as conn:
+    conn.excecute(text('truncate table label_data;'))
+    conn.commit()
+
 df_clean.to_sql(
-    name='want_and_have_by_label',
+    name='label_data',
     con=engine,
-    if_exists='replace',
+    if_exists='append',
     index=True,
     index_label='label_name'
 )
+
+with engine.connect() as conn:
+    conn.excecute(text('refresh materialized view label_analytics_view;'))
+    conn.commit()
