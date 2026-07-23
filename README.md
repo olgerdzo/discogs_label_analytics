@@ -5,6 +5,12 @@
 ![Python](https://img.shields.io/badge/ETL-Python_3.14-yellow)
 ![BI](https://img.shields.io/badge/BI-Looker_Studio-orange)
 
+👉 **[Click here to view the interactive Looker Studio Dashboard](https://datastudio.google.com/reporting/43cd9c58-bf67-411b-81ac-7126bbeae6b1)**
+
+<img width="1231" height="940" alt="image" src="https://github.com/user-attachments/assets/1dc2e008-53d4-4fa5-92c2-93265430ffc1" />
+
+---
+
 ## 📌 Project Overview
 This project is an end-to-end data analytics solution designed to evaluate the US CD market over a 20-year span. By extracting data on over **108,000+ music labels** from the Discogs API, the system automatically processes, transforms, and visualizes the delicate balance between market supply (Have) and consumer demand (Want).
 
