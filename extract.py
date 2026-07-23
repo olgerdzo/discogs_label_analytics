@@ -81,7 +81,7 @@ print(df_clean)
 engine = create_engine(DATABASE_URL)
 
 with engine.connect() as conn:
-    conn.excecute(text('truncate table label_data;'))
+    conn.execute(text('truncate table label_data;'))
     conn.commit()
 
 df_clean.to_sql(
@@ -93,5 +93,5 @@ df_clean.to_sql(
 )
 
 with engine.connect() as conn:
-    conn.excecute(text('refresh materialized view label_analytics_view;'))
+    conn.execute(text('refresh materialized view label_analytics_view;'))
     conn.commit()
