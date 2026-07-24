@@ -78,17 +78,19 @@ The resulting materialized view is connected to a **Looker Studio Dashboard**, p
 
 ## 🚀 How to Run Locally
 
-1. **Clone the repository and install dependencies:**
+1. **Create a project database.**
+2. **Create a materialized view in the database using `setup_mview.sql`.**
+3. **Clone the repository and install dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
-2. **Set up Environment Variables:**
+3. **Set up Environment Variables:**
    Create a `.env` file with your credentials:
    ```env
    DISCOGS_TOKEN=your_personal_access_token
    DATABASE_URL=postgresql://user:password@aws-0-eu-central-1.pooler.supabase.com:6543/postgres
    ```
-3. **Run the ETL Pipeline:**
+4. **Run the ETL Pipeline:**
    ```bash
    python extract.py
    ```
